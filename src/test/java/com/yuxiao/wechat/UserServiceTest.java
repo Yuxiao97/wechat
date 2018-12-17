@@ -1,5 +1,7 @@
 package com.yuxiao.wechat;
 
+
+import com.yuxiao.wechat.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,16 +12,18 @@ import javax.sql.DataSource;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class WechatApplicationTests {
+public class UserServiceTest {
 
     @Autowired
     private DataSource dataSource;
 
 
+    @Autowired
+    private UserService userService;
+
     @Test
-    public void contextLoads() {
+    public void getUserById(){
         System.out.println(dataSource);
+        System.out.println(userService.getUserById(Long.parseLong("1")));
     }
-
 }
-

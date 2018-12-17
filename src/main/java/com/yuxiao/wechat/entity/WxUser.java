@@ -4,12 +4,17 @@ package com.yuxiao.wechat.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Date;
 
 @Getter
 @Setter
-public class WxUser {
+@Table(name = "user")
+public class WxUser implements Serializable {
 
+    @Id
     private Long id;
     private String openId;
     private String nickName;
