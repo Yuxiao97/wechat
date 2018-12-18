@@ -1,29 +1,48 @@
 package com.yuxiao.wechat;
 
 
+import com.yuxiao.wechat.entity.WechatUser;
 import com.yuxiao.wechat.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.sql.DataSource;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Slf4j
 public class UserServiceTest {
-
-    @Autowired
-    private DataSource dataSource;
-
 
     @Autowired
     private UserService userService;
 
     @Test
+    public void testAddWechatUser(){
+        WechatUser wechatUser = new WechatUser();
+        wechatUser.setOpenId("gsdgasdgdga");
+        wechatUser.setNickName("哇哈哈");
+        userService.insertSelective(wechatUser);
+    }
+
+    @Test
     public void getUserById(){
-        System.out.println(dataSource);
-        System.out.println(userService.getUserById(Long.parseLong("1")));
+        WechatUser user = new WechatUser();
+        user.setId(1L);
+        System.out.println(userService.selectByPrimaryKey(user));
+    }
+
+
+    @Test
+    public void getUserByOpenid(){
+        String openid = "yuxiao0907";
+        WechatUser user = userService.getUserByOpenid(openid);
+        if(user == null){
+            log.info("不存在微信号为{}的用户", openid);
+        } else {
+            log.info("{}", user);
+        }
     }
 }

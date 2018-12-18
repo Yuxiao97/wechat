@@ -12,7 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = "user")
-public class WxUser implements Serializable {
+public class WechatUser implements Serializable {
 
     @Id
     private Long id;
