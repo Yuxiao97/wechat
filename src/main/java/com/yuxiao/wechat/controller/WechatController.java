@@ -3,6 +3,8 @@ package com.yuxiao.wechat.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yuxiao.wechat.base.ResultApi;
+import com.yuxiao.wechat.entity.WechatUser;
+import com.yuxiao.wechat.service.UserService;
 import com.yuxiao.wechat.util.HttpUtil;
 import com.yuxiao.wechat.util.WechatUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,9 @@ public class WechatController {
 
     @Autowired
     private CacheManager cacheManager;
+
+    @Autowired
+    private UserService userService;
 
 
     /*@RequestMapping("/testEhcache")
@@ -93,9 +98,23 @@ public class WechatController {
         String encryptedData = requestJson.getString("encryptedData");
         String iv = requestJson.getString("iv");
         try{
-            //fixme: 此处需要将解析后的userInfo对象存入数据库或更新已有的数据
             JSONObject userInfo = WechatUtil.getUserInfo(encryptedData,
                     cacheManager.getCache("wxSessionKey").get(openKey).toString(), iv);
+            String openId = userInfo.getString("openId");
+            WechatUser dbUser = new WechatUser();
+            dbUser.setOpenId(openId);
+            dbUser = userService.selectOne(dbUser);
+            if(dbUser != null){
+                Long userId = dbUser.getId();
+                dbUser = setPropertiesAndGet(userInfo);
+                dbUser.setId(userId);
+                userService.updateByPrimaryKeySelective(dbUser);
+                log.info("update user info, openId:{}", openId);
+            } else {
+                // 新增用户
+                userService.insertSelective(setPropertiesAndGet(userInfo));
+                log.info("add one user, openId:{}", openId);
+            }
         } catch (Exception e){
             result.setCode(1);
             result.setMsg(e.getMessage());
@@ -104,5 +123,30 @@ public class WechatController {
         return result;
     }
 
+    /**
+     * 设置用户属性并返回用户对象
+     * @return
+     */
+    private WechatUser setPropertiesAndGet(JSONObject jsonUser){
+        String openId = jsonUser.getString("openId");
+        String nickName = jsonUser.getString("nickName");
+        Integer gender = jsonUser.getInteger("gender");
+        String city = jsonUser.getString("city");
+        String province = jsonUser.getString("province");
+        String country = jsonUser.getString("country");
+        String avatarUrl = jsonUser.getString("avatarUrl");
+        String unionId = jsonUser.getString("unionId");
+
+        WechatUser dbUser = new WechatUser();
+        dbUser.setOpenId(openId);
+        dbUser.setNickName(nickName);
+        dbUser.setAvatarUrl(avatarUrl);
+        dbUser.setCity(city);
+        dbUser.setProvince(province);
+        dbUser.setCountry(country);
+        dbUser.setGender(gender);
+        dbUser.setUnionId(unionId);
+        return dbUser;
+    }
 
 }
