@@ -9,7 +9,9 @@
                   timeToIdleSeconds="120" timeToLiveSeconds="120"
                   memoryStoreEvictionPolicy="LRU" overflowToDisk="false" />
 
-    <cache name="wxSessionKey" maxElementsInMemory="100"
-           maxElementsOnDisk="100000" />
+    <cache name="wxSessionKey" maxElementsInMemory="100"  maxElementsOnDisk="100000" />
+
+    <!-- 房间缓存类 -->
+    <cache name="room" maxElementsInMemory="1000" maxElementsOnDisk="100000" />
 
 </ehcache>
