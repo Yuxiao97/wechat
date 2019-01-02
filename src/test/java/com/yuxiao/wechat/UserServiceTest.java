@@ -31,7 +31,7 @@ public class UserServiceTest {
     public void getUserById(){
         WechatUser user = new WechatUser();
         user.setId(1L);
-        System.out.println(userService.selectByPrimaryKey(user));
+        log.info("{}",userService.selectByPrimaryKey(user));
     }
 
 
