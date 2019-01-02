@@ -2,6 +2,7 @@ package com.yuxiao.wechat.entity;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +16,7 @@ public class Room {
 
     private String roomNum; //房间号，唯一
     private int currentGamerNum = 0;    //房间的当前用户数量
-    private List<Gamer> gamers;   //进入房间的用户
+    private List<Gamer> gamers = new ArrayList<>(3);   //进入房间的用户
     private List<Poker> pokers;   //原始洗好的牌
     private List<Poker> bottomPoker;    //底牌
 

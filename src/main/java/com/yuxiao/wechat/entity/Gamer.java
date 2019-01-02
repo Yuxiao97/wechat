@@ -1,6 +1,7 @@
 package com.yuxiao.wechat.entity;
 
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -8,6 +9,7 @@ import java.util.List;
  * 游戏用户
  */
 @Data
+@ToString
 public class Gamer {
 
     private String openid;

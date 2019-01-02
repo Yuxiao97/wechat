@@ -3,6 +3,7 @@ package com.yuxiao.wechat.service;
 
 import com.yuxiao.wechat.entity.Gamer;
 import com.yuxiao.wechat.entity.Room;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
  * 房间服务类
  */
 @Service
+@Slf4j
 public class RoomService {
 
     @Autowired
@@ -33,11 +35,14 @@ public class RoomService {
         if(room == null || room.getCurrentGamerNum() == 3){
             // 新建房间
             room = new Room();
+            // 将房间加入缓存
+            cache.put(room.getRoomNum(), room);
             lastRoomNum = room.getRoomNum();
         }
         gamer.setRoomNum(lastRoomNum);
         gamer.setSeatNum(room.getCurrentGamerNum()+1);
         room.addGamer(gamer);
+        log.info("the user {} get in room {}, set num is {}.", gamer.getOpenid(), lastRoomNum, gamer.getSeatNum());
         return gamer;
     }
 
@@ -49,9 +54,11 @@ public class RoomService {
         Cache cache = cacheManager.getCache("room");
         Room room = cache.get(roomNum, Room.class);
         room.removeGamer(openid);
+        log.info("the user {} leave room.", openid);
         if (room.getCurrentGamerNum() == 0){
             // 房间没有玩家时，解散该房间
             cache.evict(roomNum);
+            log.info("clean the {} room.",roomNum);
         }
     }
 
